@@ -15,7 +15,6 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-// Options for the CLI. Pass `--port` or set the `SERVICE_PORT` env var.
 type Options struct {
 	Port int `help:"Port to listen on" short:"p" default:"8888"`
 }
@@ -38,17 +37,13 @@ type SetKeyRequestBody struct {
 }
 
 func main() {
-	// Create a CLI app which takes a port option.
 	cli := humacli.New(func(hooks humacli.Hooks, options *Options) {
-		// Create a new router & API
 		router := chi.NewMux()
 		router.Use(middleware.Logger)
 		api := humachi.New(router, huma.DefaultConfig("My API", "1.0.0"))
 
-		// Different API versions may expose different runtime behaviors.
 		fdb.MustAPIVersion(710)
 
-		// Open the default database from the system cluster
 		db := fdb.MustOpenDefault()
 
 		huma.Put(api, "/{key}", func(ctx context.Context, input *struct {
@@ -83,13 +78,11 @@ func main() {
 			return resp, nil
 		})
 
-		// Tell the CLI how to start your router.
 		hooks.OnStart(func() {
 			fmt.Println("Starting server on port", options.Port)
 			http.ListenAndServe(fmt.Sprintf(":%d", options.Port), router)
 		})
 	})
 
-	// Run the CLI. When passed no commands, it starts the server.
 	cli.Run()
 }
