@@ -1,0 +1,17 @@
+meta {
+  name: Set
+  type: http
+  seq: 2
+}
+
+put {
+  url: http://localhost:8888/foo
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "value": "bigger value here but not that big"
+  }
+}
