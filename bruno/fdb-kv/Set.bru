@@ -5,13 +5,13 @@ meta {
 }
 
 put {
-  url: http://localhost:8888/foo
+  url: http://localhost:8888/mykey
   body: json
   auth: none
 }
 
 body:json {
   {
-    "value": "bigger value here but not that big"
+    "value": "{ \"json\": \"val\" }"
   }
 }

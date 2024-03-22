@@ -19,20 +19,20 @@ type Options struct {
 	Port int `help:"Port to listen on" short:"p" default:"8888"`
 }
 
-type GetKeyResponse struct {
+type GetResponse struct {
 	Body struct {
 		Key   string `json:"key" example:"foo"`
 		Value string `json:"value" example:"bar"`
 	}
 }
 
-type SetKeyResponse struct {
+type SetResponse struct {
 	Body struct {
 		Result string `json:"result" example:"ok"`
 	}
 }
 
-type SetKeyRequestBody struct {
+type SetRequestBody struct {
 	Value string `json:"value"`
 }
 
@@ -48,9 +48,9 @@ func main() {
 
 		huma.Put(api, "/{key}", func(ctx context.Context, input *struct {
 			Key  string            `path:"key"`
-			Body SetKeyRequestBody `contentType:"application/json"`
-		}) (*SetKeyResponse, error) {
-			resp := &SetKeyResponse{}
+			Body SetRequestBody `contentType:"application/json"`
+		}) (*SetResponse, error) {
+			resp := &SetResponse{}
 			_, err := db.Transact(func(tr fdb.Transaction) (interface{}, error) {
 				tr.Set(fdb.Key(input.Key), []byte(input.Body.Value))
 				return nil, nil
@@ -65,8 +65,8 @@ func main() {
 
 		huma.Get(api, "/{key}", func(ctx context.Context, input *struct {
 			Key string `path:"key"`
-		}) (*GetKeyResponse, error) {
-			resp := &GetKeyResponse{}
+		}) (*GetResponse, error) {
+			resp := &GetResponse{}
 			ret, err := db.Transact(func(tr fdb.Transaction) (interface{}, error) {
 				return tr.Get(fdb.Key(input.Key)).MustGet(), nil
 			})
